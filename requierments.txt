@@ -2,3 +2,5 @@ flask
 nltk
 pandas
 numpy
+pyarrow
+fastparquet
