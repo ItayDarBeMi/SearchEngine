@@ -5,7 +5,6 @@ from threading import Thread
 from Engine.tokenize import EngineTokenize
 from Engine.files_handler import ReadPostingsCloud
 
-
 class SearchFunctions:
 
     def __init__(self):
