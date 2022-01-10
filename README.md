@@ -11,3 +11,14 @@ open new python file and send requests to the engine
 import request
 response = request.get(url="http://34.72.166.196/search",params={"query":"hello world"})
 ```
+
+## Run Engine Locally
+
+### clone repository
+```bash
+git clone https://github.com/ItayDarBeMi/SearchEngine.git
+```
+### start server
+```bash
+python Engine/search_frontend.py
+```
