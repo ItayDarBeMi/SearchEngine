@@ -1,4 +1,6 @@
 from flask import Flask, request, jsonify
+from search_backend import SearchFunctions
+
 
 class MyFlaskApp(Flask):
     def run(self, host=None, port=None, debug=None, **options):
@@ -7,6 +9,7 @@ class MyFlaskApp(Flask):
 app = MyFlaskApp(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 
+backend_search = SearchFunctions()
 
 @app.route("/search")
 def search():
@@ -23,17 +26,17 @@ def search():
         if you're using ngrok on Colab or your external IP on GCP.
     Returns:
     --------
-        list of up to 100 search results, ordered from best to worst where each 
+        list
+        of up to 100 search results, ordered from best to worst where each
         element is a tuple (wiki_id, title).
     '''
     res = []
     query = request.args.get('query', '')
     if len(query) == 0:
-      return jsonify(res)
-    # BEGIN SOLUTION
-
-    # END SOLUTION
+        return jsonify(res)
+    res = backend_search.main_engine_search(query)
     return jsonify(res)
+
 
 @app.route("/search_body")
 def search_body():
@@ -54,11 +57,10 @@ def search_body():
     res = []
     query = request.args.get('query', '')
     if len(query) == 0:
-      return jsonify(res)
-    # BEGIN SOLUTION
-
-    # END SOLUTION
+        return jsonify(res)
+    res = backend_search.body(query)
     return jsonify(res)
+
 
 @app.route("/search_title")
 def search_title():
@@ -80,10 +82,33 @@ def search_title():
     res = []
     query = request.args.get('query', '')
     if len(query) == 0:
-      return jsonify(res)
-    # BEGIN SOLUTION
+        return jsonify(res)
+    res = backend_search.title(query)
+    return jsonify(res)
 
-    # END SOLUTION
+@app.route("/search_anchor")
+def search_anchor():
+    ''' Returns ALL (not just top 100) search results that contain A QUERY WORD
+        IN THE ANCHOR TEXT of articles, ordered in descending order of the
+        NUMBER OF QUERY WORDS that appear in anchor text linking to the page.
+        For example, a document with a anchor text that matches two of the
+        query words will be ranked before a document with anchor text that
+        matches only one query term.
+
+        Test this by navigating to the a URL like:
+         http://YOUR_SERVER_DOMAIN/search_anchor?query=hello+world
+        where YOUR_SERVER_DOMAIN is something like XXXX-XX-XX-XX-XX.ngrok.io
+        if you're using ngrok on Colab or your external IP on GCP.
+    Returns:
+    --------
+        list of ALL (not just top 100) search results, ordered from best to
+        worst where each element is a tuple (wiki_id, title).
+    '''
+    res = []
+    query = request.args.get('query', '')
+    if len(query) == 0:
+        return jsonify(res)
+    res = backend_search.anchor_text(query)
     return jsonify(res)
 
 @app.route("/get_pagerank", methods=['POST'])
@@ -105,11 +130,10 @@ def get_pagerank():
     res = []
     wiki_ids = request.get_json()
     if len(wiki_ids) == 0:
-      return jsonify(res)
-    # BEGIN SOLUTION
-
-    # END SOLUTION
+        return jsonify(res)
+    res = backend_search.pagerank(wiki_ids)
     return jsonify(res)
+
 
 @app.route("/get_pageview", methods=['POST'])
 def get_pageview():
@@ -132,13 +156,11 @@ def get_pageview():
     res = []
     wiki_ids = request.get_json()
     if len(wiki_ids) == 0:
-      return jsonify(res)
-    # BEGIN SOLUTION
-
-    # END SOLUTION
+        return jsonify(res)
+    res = backend_search.pageviews(wiki_ids)
     return jsonify(res)
 
 
 if __name__ == '__main__':
-    # run the Flask RESTful API, make the server publicly available (host='0.0.0.0') on port 8080
+    # # run the Flask RESTful API, make the server publicly available (host='0.0.0.0') on port 8080
     app.run(host='0.0.0.0', port=8080, debug=True)
