@@ -15,10 +15,10 @@ response = request.get(url="http://34.72.166.196/search",params={"query":"hello 
 ## Run Engine Locally
 
 ### clone repository
-```bash
+```python
 git clone https://github.com/ItayDarBeMi/SearchEngine.git
 ```
 ### start server
-```bash
+```python
 python Engine/search_frontend.py
 ```
